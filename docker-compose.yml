@@ -1,0 +1,10 @@
+services:
+  eap:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: eap81-jakartaee10-sample:latest
+    container_name: eap81-jakartaee10
+    ports:
+      - "8080:8080"
+      - "9990:9990"

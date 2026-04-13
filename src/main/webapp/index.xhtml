@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html">
+<h:head>
+  <meta charset="UTF-8" />
+  <title>EAP 8.1 Jakarta Faces Session Counter</title>
+</h:head>
+<h:body>
+  <h1>EAP 8.1 + Jakarta EE 10 (XHTML/JSF)</h1>
+
+  <h:panelGroup layout="block" style="margin-bottom: 8px;">
+    <strong>Session ID:</strong>
+    <h:outputText value="#{counterBackingBean.sessionId}" />
+  </h:panelGroup>
+  <h:panelGroup layout="block" style="margin-bottom: 12px;">
+    <strong>Counter:</strong>
+    <h:outputText value="#{counterBackingBean.counter}" />
+  </h:panelGroup>
+
+  <h:form>
+    <h:commandButton value="Count Up" action="#{counterBackingBean.increment}" />
+    <h:commandButton value="Reset" action="#{counterBackingBean.reset}" style="margin-left: 8px;" />
+  </h:form>
+</h:body>
+</html>
