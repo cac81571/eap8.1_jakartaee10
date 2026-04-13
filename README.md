@@ -1,6 +1,6 @@
 # EAP 8.1 で Jakarta EE 10 を動かす Docker プロジェクト
 
-このプロジェクトは、Jakarta EE 10 のサンプル WAR をビルドし、JBoss EAP 8.1 コンテナにデプロイして実行する最小構成です。
+このプロジェクトは、Jakarta EE 10 のサンプル WAR をビルドし、JBoss EAP 8.1 の2ノード構成を HAProxy 配下で実行する最小構成です。
 以下の Red Hat ブログ記事の流れに合わせて、EAP builder/runtime のマルチステージで構成しています。
 https://rheb.hatenablog.com/entry/2024/06/28/162306
 
@@ -26,7 +26,7 @@ docker login registry.redhat.io
 mvn -DskipTests package
 ```
 
-3. イメージをビルドして起動
+3. イメージをビルドして起動（`eap1`, `eap2`, `haproxy`）
 
 ```bash
 docker compose up --build -d
@@ -35,9 +35,13 @@ docker compose up --build -d
 4. 動作確認
 
 - トップページ: <http://localhost:8080/>
+- HAProxy 統計: <http://localhost:8404/stats>
 - `index.xhtml` 上で `Count Up` を押すと、`@SessionScoped` のカウンタが増えます
 - 同じブラウザタブではカウンタが維持され、別ブラウザやシークレットウィンドウでは別セッションになります
 - フォーム送信後は `faces-redirect=true` で `GET` に遷移する PRG パターン構成です
+
+`docker-compose.yml` は EAP イメージのデフォルト起動をそのまま利用し、`JAVA_OPTS_APPEND` で `jboss.node.name` をノードごとに設定しています。`web.xml` の `<distributable/>` によりセッション複製に対応した構成です。
+負荷分散は HAProxy が担当し、バックエンドは `eap1:8080` と `eap2:8080` の2台です。
 
 JSF 画面を利用するため、EAP の Galleon レイヤーに `jsf` を含めています。
 `Dockerfile` 変更後は必ず `--no-cache` 付きで再ビルドしてください。

@@ -12,6 +12,10 @@
     <strong>Session ID:</strong>
     <h:outputText value="#{counterBackingBean.sessionId}" />
   </h:panelGroup>
+  <h:panelGroup layout="block" style="margin-bottom: 8px;">
+    <strong>Node:</strong>
+    <h:outputText value="#{counterBackingBean.nodeName}" />
+  </h:panelGroup>
   <h:panelGroup layout="block" style="margin-bottom: 12px;">
     <strong>Counter:</strong>
     <h:outputText value="#{counterBackingBean.counter}" />

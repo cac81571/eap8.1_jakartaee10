@@ -24,6 +24,10 @@ public class CounterBackingBean implements Serializable {
         .getSessionId(false);
   }
 
+  public String getNodeName() {
+    return System.getProperty("jboss.node.name", "unknown");
+  }
+
   public String increment() {
     counter++;
     return "index.xhtml?faces-redirect=true";
