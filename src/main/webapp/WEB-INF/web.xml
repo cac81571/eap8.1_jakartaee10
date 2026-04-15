@@ -4,6 +4,16 @@
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
 
+  <context-param>
+    <param-name>jakarta.faces.STATE_SAVING_METHOD</param-name>
+    <param-value>client</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>jakarta.faces.PARTIAL_STATE_SAVING</param-name>
+    <param-value>false</param-value>
+  </context-param>
+
   <servlet>
     <servlet-name>Faces Servlet</servlet-name>
     <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
@@ -18,6 +28,16 @@
   <welcome-file-list>
     <welcome-file>index.xhtml</welcome-file>
   </welcome-file-list>
+
+  <error-page>
+    <exception-type>jakarta.faces.application.ViewExpiredException</exception-type>
+    <location>/index.xhtml</location>
+  </error-page>
+
+  <error-page>
+    <exception-type>jakarta.servlet.ServletException</exception-type>
+    <location>/index.xhtml</location>
+  </error-page>
 
   <distributable/>
 

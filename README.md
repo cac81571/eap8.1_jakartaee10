@@ -2,7 +2,55 @@
 
 このプロジェクトは、Jakarta EE 10 のサンプル WAR をビルドし、JBoss EAP 8.1 の2ノード構成を HAProxy 配下で実行する最小構成です。
 以下の Red Hat ブログ記事の流れに合わせて、EAP builder/runtime のマルチステージで構成しています。
+
 https://rheb.hatenablog.com/entry/2024/06/28/162306
+
+## 構成の整理（サービスと役割）
+
+| コンポーネント | 役割 |
+|----------------|------|
+| **eap1 / eap2** | アプリケーション（`ROOT.war`）。`JGROUPS_*` でクラスタ検出（DNS_PING）。 |
+| **haproxy** | HTTP の負荷分散（`eap1` / `eap2`）。設定は `haproxy/haproxy.cfg`。 |
+| **datagrid**（Infinispan Server コンテナ） | （任意）検証用途の外部 Infinispan。現状のアプリ本体では必須ではありません。 |
+
+### HTTP セッション共有と「Data Grid」コンテナの違い
+
+- **ブラウザの HTTP セッション（JSF の `@SessionScoped` など）のレプリケーション**は、Red Hat Data Grid 製品サーバに載せ替えているわけではなく、通常どおり **EAP 内蔵の Infinispan（`infinispan` サブシステム）＋クラスタ時は JGroups** が担当します。
+- アプリ側では `src/main/webapp/WEB-INF/web.xml` の **`<distributable/>`** でクラスタ上のセッション複製の対象になっています。
+- `docker-compose.yml` の **datagrid サービス**は、上記とは別の外部 Infinispan です。セッションストアの代替ではありません。
+
+### ログ（どこで有効か）
+
+- **どの EAP ノードで処理したか**  
+  ノード名は `jboss.node.name`（`JAVA_OPTS_APPEND` の `-Djboss.node.name=...`）が付いていればそれを優先します。
+- **HAProxy がどちらのバックエンドに振ったか**  
+  `haproxy/haproxy.cfg` の **`defaults`** で `log global` と `log-format` を指定しており、コンテナの **stdout** にアクセスログが出ます。
+- **HAProxy のログを止めたい場合**  
+  同じく **`haproxy/haproxy.cfg`** で `defaults` の `log global` と `log-format` をコメントアウトし、代わりに `no log` を指定する（`global` の `log stdout ...` も不要ならコメントアウト）。
+
+### EAP 側のセッション／Infinispan 設定を CLI で確認したい場合
+
+HTTP セッション用キャッシュやクラスタは **EAP のサーバ設定**（通常は `$JBOSS_HOME/standalone/configuration/` 以下の `standalone-ha.xml` 等）にあります。このリポジトリでは Galleon の **`cloud-default-config`** でプロビジョニングしており、**カスタム XML は同梱していません**。
+
+起動中のサーバに接続する例:
+
+```bash
+$JBOSS_HOME/bin/jboss-cli.sh -c
+/subsystem=infinispan:read-resource(recursive=true)
+/subsystem=jgroups:read-resource(recursive=true)
+/subsystem=undertow:read-resource(recursive=true)
+```
+
+オフラインで特定の設定ファイルを編集する例:
+
+```bash
+$JBOSS_HOME/bin/jboss-cli.sh
+embed-server --server-config=standalone-ha.xml
+# 必要な /subsystem=... の操作
+stop-embedded-server
+```
+
+変更する場合は、**実際に EAP が読み込んでいる設定ファイル名**と、**HA クラスタ用プロファイル**が前提になる点に注意してください。
 
 ## 前提
 
@@ -26,7 +74,7 @@ docker login registry.redhat.io
 mvn -DskipTests package
 ```
 
-3. イメージをビルドして起動（`eap1`, `eap2`, `haproxy`）
+3. イメージをビルドして起動（`eap1`, `eap2`, `datagrid`, `haproxy`）
 
 ```bash
 docker compose up --build -d

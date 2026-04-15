@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="jakarta.faces.html">
-<h:head>
-  <meta charset="UTF-8" />
-  <title>EAP 8.1 Jakarta Faces Session Counter</title>
-</h:head>
-<h:body>
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+<f:view>
+  <f:event type="preRenderView" listener="#{counterBackingBean.observeGetSessionRead}" />
+  <h:head>
+    <meta charset="UTF-8" />
+    <title>EAP 8.1 Jakarta Faces Session Counter</title>
+  </h:head>
+  <h:body>
   <h1>EAP 8.1 + Jakarta EE 10 (XHTML/JSF)</h1>
 
   <h:panelGroup layout="block" style="margin-bottom: 8px;">
@@ -22,8 +25,18 @@
   </h:panelGroup>
 
   <h:form>
-    <h:commandButton value="Count Up" action="#{counterBackingBean.increment}" />
-    <h:commandButton value="Reset" action="#{counterBackingBean.reset}" style="margin-left: 8px;" />
+    <h:panelGroup layout="block" style="margin-bottom: 8px;">
+      <strong>PRG Pattern (POST/Redirect/GET):</strong>
+      <h:commandButton value="Count Up (PRG)" action="#{counterBackingBean.incrementPrg}" style="margin-left: 8px;" />
+      <h:commandButton value="Reset (PRG)" action="#{counterBackingBean.resetPrg}" style="margin-left: 8px;" />
+    </h:panelGroup>
+
+    <h:panelGroup layout="block">
+      <strong>No PRG (POST only):</strong>
+      <h:commandButton value="Count Up (No PRG)" action="#{counterBackingBean.incrementNoPrg}" style="margin-left: 8px;" />
+      <h:commandButton value="Reset (No PRG)" action="#{counterBackingBean.resetNoPrg}" style="margin-left: 8px;" />
+    </h:panelGroup>
   </h:form>
-</h:body>
+  </h:body>
+</f:view>
 </html>

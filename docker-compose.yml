@@ -6,9 +6,17 @@ services:
     image: eap81-jakartaee10-sample:latest
     container_name: eap81-jakartaee10-1
     environment:
-      JAVA_OPTS_APPEND: "-Djboss.node.name=eap1 -Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0"
+      JGROUPS_PING_PROTOCOL: "dns.DNS_PING"
+      OPENSHIFT_DNS_PING_SERVICE_NAME: "eap-cluster"
+      OPENSHIFT_DNS_PING_SERVICE_PORT: "8888"
+      JAVA_OPTS_APPEND: "-Djboss.node.name=eap1 -Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0 -Djboss.bind.address.private=0.0.0.0"
+    networks:
+      default:
+        aliases:
+          - eap-cluster
     expose:
       - "8080"
+      - "8888"
     ports:
       - "9990:9990"
 
@@ -16,13 +24,31 @@ services:
     image: eap81-jakartaee10-sample:latest
     container_name: eap81-jakartaee10-2
     environment:
-      JAVA_OPTS_APPEND: "-Djboss.node.name=eap2 -Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0"
+      JGROUPS_PING_PROTOCOL: "dns.DNS_PING"
+      OPENSHIFT_DNS_PING_SERVICE_NAME: "eap-cluster"
+      OPENSHIFT_DNS_PING_SERVICE_PORT: "8888"
+      JAVA_OPTS_APPEND: "-Djboss.node.name=eap2 -Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0 -Djboss.bind.address.private=0.0.0.0"
+    networks:
+      default:
+        aliases:
+          - eap-cluster
     expose:
       - "8080"
+      - "8888"
     ports:
       - "9991:9990"
     depends_on:
-      - eap1
+      eap1:
+        condition: service_started
+
+  datagrid:
+    image: infinispan/server:15.0
+    container_name: eap81-datagrid
+    environment:
+      USER: "admin"
+      PASS: "admin"
+    expose:
+      - "11222"
 
   haproxy:
     image: haproxy:2.9
