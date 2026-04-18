@@ -3,7 +3,10 @@
       xmlns:h="jakarta.faces.html"
       xmlns:f="jakarta.faces.core">
 <f:view>
-  <f:event type="preRenderView" listener="#{counterBackingBean.observeGetSessionRead}" />
+  <f:metadata>
+    <f:viewAction action="#{counterBackingBean.initFromFlash}" />
+  </f:metadata>
+  <f:event type="preRenderView" listener="#{counterBackingBean.observeSessionRead}" />
   <h:head>
     <meta charset="UTF-8" />
     <title>EAP 8.1 Jakarta Faces Session Counter</title>
@@ -22,6 +25,15 @@
   <h:panelGroup layout="block" style="margin-bottom: 12px;">
     <strong>Counter:</strong>
     <h:outputText value="#{counterBackingBean.counter}" />
+  </h:panelGroup>
+  <h:panelGroup layout="block" style="margin-bottom: 12px;" rendered="#{not empty counterBackingBean.flashRedirectNotice}">
+    <strong>Flash (PRG リダイレクト後の GET):</strong>
+    <h:outputText value="#{counterBackingBean.flashRedirectNotice}" />
+  </h:panelGroup>
+  <h:panelGroup layout="block" style="margin-bottom: 12px;">
+    <strong>Session bulk payload:</strong>
+    <h:outputText value="#{counterBackingBean.sessionBulkBytes}" /> bytes
+    <em style="margin-left: 8px;">(JVM: -Dsession.bulk.bytes=N bytes, 0 disables)</em>
   </h:panelGroup>
 
   <h:form>

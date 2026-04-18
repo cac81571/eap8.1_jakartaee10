@@ -9,7 +9,7 @@ services:
       JGROUPS_PING_PROTOCOL: "dns.DNS_PING"
       OPENSHIFT_DNS_PING_SERVICE_NAME: "eap-cluster"
       OPENSHIFT_DNS_PING_SERVICE_PORT: "8888"
-      JAVA_OPTS_APPEND: "-Djboss.node.name=eap1 -Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0 -Djboss.bind.address.private=0.0.0.0"
+      JAVA_OPTS_APPEND: "-Djboss.node.name=eap1 -Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0 -Djboss.bind.address.private=0.0.0.0 -Dsession.bulk.bytes=10000"
     networks:
       default:
         aliases:
@@ -27,7 +27,7 @@ services:
       JGROUPS_PING_PROTOCOL: "dns.DNS_PING"
       OPENSHIFT_DNS_PING_SERVICE_NAME: "eap-cluster"
       OPENSHIFT_DNS_PING_SERVICE_PORT: "8888"
-      JAVA_OPTS_APPEND: "-Djboss.node.name=eap2 -Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0 -Djboss.bind.address.private=0.0.0.0"
+      JAVA_OPTS_APPEND: "-Djboss.node.name=eap2 -Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0 -Djboss.bind.address.private=0.0.0.0 -Dsession.bulk.bytes=10000"
     networks:
       default:
         aliases:
@@ -48,7 +48,7 @@ services:
       JGROUPS_PING_PROTOCOL: "dns.DNS_PING"
       OPENSHIFT_DNS_PING_SERVICE_NAME: "eap-cluster"
       OPENSHIFT_DNS_PING_SERVICE_PORT: "8888"
-      JAVA_OPTS_APPEND: "-Djboss.node.name=eap3 -Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0 -Djboss.bind.address.private=0.0.0.0"
+      JAVA_OPTS_APPEND: "-Djboss.node.name=eap3 -Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0 -Djboss.bind.address.private=0.0.0.0 -Dsession.bulk.bytes=10000"
     networks:
       default:
         aliases:

@@ -1,0 +1,9 @@
+# HTTP セッション複製・クラスタ関連（WildFly clustering / Infinispan キャッシュ / AS clustering）
+# ルート DEBUG は全体が非常に冗長になるので、検証が終わったら INFO に戻すことを推奨。
+embed-server --server-config=standalone.xml --std-out=echo
+/subsystem=logging/console-handler=CONSOLE:write-attribute(name=level,value=ALL)
+/subsystem=logging/logger=org.wildfly.clustering:add(level=DEBUG,handlers=[CONSOLE],use-parent-handlers=false)
+/subsystem=logging/logger=org.jboss.as.clustering:add(level=DEBUG,handlers=[CONSOLE],use-parent-handlers=false)
+/subsystem=logging/logger=org.jboss.as.clustering.infinispan:add(level=DEBUG,handlers=[CONSOLE],use-parent-handlers=false)
+/subsystem=logging/logger=jakarta.enterprise.resource.webcontainer.faces:add(level=DEBUG,handlers=[CONSOLE],use-parent-handlers=false)
+stop-embedded-server
