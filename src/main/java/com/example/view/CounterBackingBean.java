@@ -5,14 +5,14 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Logger;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.context.Flash;
+import jakarta.faces.lifecycle.ClientWindowScoped;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Named("counterBackingBean")
-@SessionScoped
+@ClientWindowScoped
 public class CounterBackingBean implements Serializable {
 
   private static final long serialVersionUID = 1L;
