@@ -84,14 +84,14 @@ public class CounterBackingBean implements Serializable {
     counter++;
     logSessionWrite("incrementPrg", counter);
     putFlashPrgConfirm("incrementPrg → counter=" + counter);
-    return "/index.xhtml?faces-redirect=true";
+    return "incrementPrg";
   }
 
   public String resetPrg() {
     counter = 0;
     logSessionWrite("resetPrg", counter);
     putFlashPrgConfirm("resetPrg → counter=" + counter);
-    return "/index.xhtml?faces-redirect=true";
+    return "resetPrg";
   }
 
   public String incrementNoPrg() {
