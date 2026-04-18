@@ -1,6 +1,6 @@
 # EAP 8.1 で Jakarta EE 10 を動かす Docker プロジェクト
 
-このプロジェクトは、Jakarta EE 10 のサンプル WAR をビルドし、JBoss EAP 8.1 の2ノード構成を HAProxy 配下で実行する最小構成です。
+このプロジェクトは、Jakarta EE 10 のサンプル WAR をビルドし、JBoss EAP 8.1 の3ノード構成を HAProxy 配下で実行する最小構成です。
 以下の Red Hat ブログ記事の流れに合わせて、EAP builder/runtime のマルチステージで構成しています。
 
 https://rheb.hatenablog.com/entry/2024/06/28/162306
@@ -9,8 +9,8 @@ https://rheb.hatenablog.com/entry/2024/06/28/162306
 
 | コンポーネント | 役割 |
 |----------------|------|
-| **eap1 / eap2** | アプリケーション（`ROOT.war`）。`JGROUPS_*` でクラスタ検出（DNS_PING）。 |
-| **haproxy** | HTTP の負荷分散（`eap1` / `eap2`）。設定は `haproxy/haproxy.cfg`。 |
+| **eap1 / eap2 / eap3** | アプリケーション（`ROOT.war`）。`JGROUPS_*` でクラスタ検出（DNS_PING）。 |
+| **haproxy** | HTTP の負荷分散（`eap1` / `eap2` / `eap3`）。設定は `haproxy/haproxy.cfg`。 |
 | **datagrid**（Infinispan Server コンテナ） | （任意）検証用途の外部 Infinispan。現状のアプリ本体では必須ではありません。 |
 
 ### HTTP セッション共有と「Data Grid」コンテナの違い
@@ -23,7 +23,7 @@ https://rheb.hatenablog.com/entry/2024/06/28/162306
 
 - **どの EAP ノードで処理したか**  
   ノード名は `jboss.node.name`（`JAVA_OPTS_APPEND` の `-Djboss.node.name=...`）が付いていればそれを優先します。
-- **HAProxy がどちらのバックエンドに振ったか**  
+- **HAProxy がどのバックエンドに振ったか**  
   `haproxy/haproxy.cfg` の **`defaults`** で `log global` と `log-format` を指定しており、コンテナの **stdout** にアクセスログが出ます。
 - **HAProxy のログを止めたい場合**  
   同じく **`haproxy/haproxy.cfg`** で `defaults` の `log global` と `log-format` をコメントアウトし、代わりに `no log` を指定する（`global` の `log stdout ...` も不要ならコメントアウト）。
@@ -74,7 +74,7 @@ docker login registry.redhat.io
 mvn -DskipTests package
 ```
 
-3. イメージをビルドして起動（`eap1`, `eap2`, `datagrid`, `haproxy`）
+3. イメージをビルドして起動（`eap1`, `eap2`, `eap3`, `datagrid`, `haproxy`）
 
 ```bash
 docker compose up --build -d
@@ -89,7 +89,7 @@ docker compose up --build -d
 - フォーム送信後は `faces-redirect=true` で `GET` に遷移する PRG パターン構成です
 
 `docker-compose.yml` は EAP イメージのデフォルト起動をそのまま利用し、`JAVA_OPTS_APPEND` で `jboss.node.name` をノードごとに設定しています。`web.xml` の `<distributable/>` によりセッション複製に対応した構成です。
-負荷分散は HAProxy が担当し、バックエンドは `eap1:8080` と `eap2:8080` の2台です。
+負荷分散は HAProxy が担当し、バックエンドは `eap1:8080`・`eap2:8080`・`eap3:8080` の3台です。
 
 JSF 画面を利用するため、EAP の Galleon レイヤーに `jsf` を含めています。
 `Dockerfile` 変更後は必ず `--no-cache` 付きで再ビルドしてください。
