@@ -106,21 +106,16 @@ public class CounterBackingBean implements Serializable {
     return null;
   }
 
-  /**
-   * PRG リダイレクト後の GET で Flash を取り込む（Invoke Application 相当の viewAction で実行）。
-   * preRenderView より先に走らせ、他 EL より先に 1 回だけ読む。
-   */
-  public void initFromFlash() {
-    consumeFlashAfterRedirect();
-  }
-
   /** ビュー描画前に1回／リクエスト。セッション上の counter を画面に出す直前の「読み取り」として記録する。 */
   public void observeSessionRead() {
     logSessionRead();
   }
 
-  /** POST→リダイレクト→GET の GET でフラッシュを1回だけ読み、画面・ログに出す。 */
-  private void consumeFlashAfterRedirect() {
+  /**
+   * POST→リダイレクト→GET の GET でフラッシュを1回だけ読み、画面・ログに出す。
+   * {@link FlashRestorePhaseListener} が RESTORE_VIEW の先頭で呼ぶ（viewAction より早い）。
+   */
+  void consumeFlashAfterRedirect() {
     Flash flash = FacesContext.getCurrentInstance().getExternalContext().getFlash();
     Object raw = flash.get(FLASH_PRG_CONFIRM_KEY);
     if (raw != null) {

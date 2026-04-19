@@ -3,9 +3,6 @@
       xmlns:h="jakarta.faces.html"
       xmlns:f="jakarta.faces.core">
 <f:view>
-  <f:metadata>
-    <f:viewAction action="#{counterBackingBean.initFromFlash}" />
-  </f:metadata>
   <f:event type="preRenderView" listener="#{counterBackingBean.observeSessionRead}" />
   <h:head>
     <meta charset="UTF-8" />
