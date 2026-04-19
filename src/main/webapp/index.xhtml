@@ -26,9 +26,9 @@
     <strong>Counter:</strong>
     <h:outputText value="#{counterBackingBean.counter}" />
   </h:panelGroup>
-  <h:panelGroup layout="block" style="margin-bottom: 12px;" rendered="#{not empty counterBackingBean.flashRedirectNotice}">
+  <h:panelGroup layout="block" style="margin-bottom: 12px;">
     <strong>Flash (PRG リダイレクト後の GET):</strong>
-    <h:outputText value="#{counterBackingBean.flashRedirectNotice}" />
+    <h:outputText value="#{empty counterBackingBean.flashRedirectNotice ? '---' : counterBackingBean.flashRedirectNotice}" />
   </h:panelGroup>
   <h:panelGroup layout="block" style="margin-bottom: 12px;">
     <strong>Session bulk payload:</strong>
